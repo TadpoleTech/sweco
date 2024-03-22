@@ -12,7 +12,6 @@ CREATE TABLE users(
 CREATE TABLE boards(
     board_id SERIAL PRIMARY KEY,
     header TEXT NOT NULL,
-    is_city BOOLEAN,
     pos_lat NUMERIC(7, 6),
     pos_lon NUMERIC(7, 6)
 );
@@ -33,12 +32,16 @@ CREATE TABLE posts(
     post_id SERIAL PRIMARY KEY,
     timestamp TIMESTAMP,
     owner_id INT NOT NULL,
+    board_id INT,
     header TEXT NOT NULL,
     content TEXT,
     pos_lat NUMERIC(7, 6),
     pos_lon NUMERIC(7, 6),
     FOREIGN KEY (owner_id)
         REFERENCES users (user_id)
+        ON DELETE CASCADE,
+    FOREIGN KEY (board_id)
+        REFERENCES boards (board_id)
         ON DELETE CASCADE
 );
 
