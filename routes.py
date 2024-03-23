@@ -43,11 +43,9 @@ def board(board_id):
         board_info = boards_module.get_board_by_id(board_id)
         content = boards_module.get_posts_by_board_id(board_id)
         for post in content:
-            post["votes"] = votes_module.get_votes_by_post_id(post["post_id"])
-        content_dict = {}
-        for d in content:
-            content_dict[d["post_id"]] = d
-        board_info["posts"] = content_dict
+            content[post["post_id"]] = posts_module.get_post_by_id(
+                post["post_id"])
+        board_info["posts"] = content
         return board_info
     if request.method == "POST":
         header = request.form["header"]
@@ -65,15 +63,21 @@ def post(board_id, post_id):
     if request.method == "GET":
         content = posts_module.get_post_by_id(post_id)
         content["votes"] = votes_module.get_votes_by_post_id(post_id)
+        content["voted"] = votes_module.if_voted(post_id)
         return content
 
 
 @app.route("/boards/<int:board_id>/<int:post_id>/vote", methods=["GET", "POST"])
 def votes(board_id, post_id):
     if request.method == "GET":
-        return votes_module.get_votes_by_post_id(post_id)
+        return str(votes_module.get_votes_by_post_id(post_id))
     if request.method == "POST":
         votes_module.vote_post(post_id)
+
+
+@app.route("/boards/<int:board_id>/<int:post_id>/comments")
+def comments(board_id, post_id):
+    return "COMMENTTI"
 
 
 @app.route("/users", methods=["GET", "POST"])
