@@ -10,8 +10,7 @@ def get_votes_by_post_id(id):
     return votes
 
 
-def if_voted(post_id):
-    user_id = session["user_id"]
+def if_voted(post_id, user_id):
     sql = """SELECT COUNT(*) FROM votes WHERE post_id = :post_id AND user_id = :user_id"""
     result = db.session.execute(
         text(sql), {'post_id': post_id, 'user_id': user_id})

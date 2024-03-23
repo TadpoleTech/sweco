@@ -37,13 +37,14 @@ def boards():
 
 @app.route("/boards/<int:board_id>", methods=["GET", "POST"])
 def board(board_id):
+    user_id = session["user_id"]
     if request.method == "GET":
         board_info = boards_module.get_board_by_id(board_id)
         content = boards_module.get_posts_by_board_id(board_id)
         content_dict = {}
         for post in content:
             content_dict[post["post_id"]] = posts_module.get_post_by_id(
-                post["post_id"])
+                post["post_id"], user_id=user_id)
         board_info["posts"] = content_dict
         return jsonify(board_info)
     if request.method == "POST":
@@ -53,26 +54,32 @@ def board(board_id):
         pos_lat = data.get("lat")
         pos_lon = data.get("lon")
         if not (pos_lat and pos_lon):
-            posts_module.new_post(header, content, board_id)
+            posts_module.new_post(
+                owner_id=user_id, header=header, content=content, board_id=board_id)
         else:
-            posts_module.new_post(header, content, board_id, pos_lat, pos_lon)
+            posts_module.new_post(owner_id=user_id, header=header,
+                                  content=content, pos_lat=pos_lat, pos_lon=pos_lon)
         return jsonify({"message": "Post created successfully."})
 
 
 @app.route("/boards/<int:board_id>/<int:post_id>", methods=["GET", "POST"])
 def post(board_id, post_id):
+    user_id = session["user_id"]
     if request.method == "GET":
-        content = posts_module.get_post_by_id(post_id)
+        content = posts_module.get_post_by_id(id=post_id, user_id=user_id)
         return jsonify(content)
 
 
 @app.route("/boards/<int:board_id>/<int:post_id>/vote", methods=["GET", "POST"])
 def votes(board_id, post_id):
+    user_id = session["user_id"]
     if request.method == "GET":
-        return str(votes_module.get_votes_by_post_id(post_id))
+        return str(votes_module.get_votes_by_post_id(id=post_id))
     if request.method == "POST":
-        votes_module.vote_post(post_id)
-        return jsonify({"message": "Vote recorded successfully."})
+        if user_id:
+            votes_module.vote_post(post_id=post_id, user_id=user_id)
+            return jsonify({"message": "Vote recorded successfully."})
+        abort(401)
 
 
 @app.route("/boards/<int:board_id>/<int:post_id>/comments")
@@ -104,46 +111,55 @@ def login():
         data = request.get_json()
         username = data["username"]
         password = data["password"]
-        return str(users_module.login(username, password))
+        if users_module.login(username, password):
+            return jsonify({"message": "Login successful."})
+        return jsonify({"message": "Login failed."})
     return "HEIPULIS! TÄMÄ METODI OTTAA VAAN POSTAUKSIA"
 
 
 @app.route("/logout")
 def logout():
-    session["username"] = None
-    session["user_id"] = None
-    session["is_admin"] = None
+    # I don't know if this needs any code
+    pass
 
 
 @app.route("/current_user")
 def current_user():
-    return users_module.get_user_by_id(session["user_id"])
+    # I don't know if this needs any code
+    pass
 
 
 @app.route("/posts", methods=["POST"])
 def new_post():
+    user_id = session["user_id"]
+    if not user_id:
+        abort(401)
     if request.method == "POST":
         data = request.get_json()
         header = data["header"]
         content = data["content"]
         post_lat = data["pos_lat"]
         pos_lon = data["pos_lon"]
-        posts_module.new_post(
-            header, content, pos_lat=post_lat, pos_lon=pos_lon)
+        posts_module.new_post(header=header, content=content,
+                              owner_id=user_id, pos_lat=post_lat, pos_lon=pos_lon)
         return jsonify({"message": "Post created successfully."})
 
 
 @app.route("/posts/city/<cityname>", methods=["GET"])
 def posts_city(cityname):
+    user_id = session["user_id"]
     if request.method == "GET":
-        content = posts_module.get_all_local_posts()
+        data = request.get_json()
+        content = posts_module.get_all_local_posts(user_id=user_id)
         filtered_content = osm_f.city_filter(content, cityname)
         return jsonify(filtered_content)
 
 
 @app.route("/posts/city/<cityname>/<suburb>", methods=["GET", "POST"])
 def posts_suburb(cityname, suburb):
+    user_id = session["user_id"]
     if request.method == "GET":
-        content = posts_module.get_all_local_posts()
+        data = request.get_json()
+        content = posts_module.get_all_local_posts(user_id=user_id)
         filtered_content = osm_f.suburb_filter(content, cityname, suburb)
         return jsonify(filtered_content)
