@@ -130,6 +130,7 @@ def new_post():
         pos_lon = data["pos_lon"]
         posts_module.new_post(
             header, content, pos_lat=post_lat, pos_lon=pos_lon)
+        return jsonify({"message": "Post created successfully."})
 
 
 @app.route("/posts/city/<cityname>", methods=["GET"])
