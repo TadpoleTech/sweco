@@ -174,15 +174,13 @@ def new_post():
 def posts_city(cityname):
     user_id = get_user_id()
     if request.method == "GET":
-        content = posts_module.get_all_local_posts(user_id=user_id)
-        filtered_content = osm_f.city_filter(content, cityname)
-        return jsonify(filtered_content)
+        content = posts_module.get_city_posts(user_id=user_id, city=cityname)
+        return jsonify(content)
 
 
 @app.route("/posts/city/<cityname>/<suburb>", methods=["GET", "POST"])
 def posts_suburb(cityname, suburb):
     user_id = get_user_id()
     if request.method == "GET":
-        content = posts_module.get_all_local_posts(user_id=user_id)
-        filtered_content = osm_f.suburb_filter(content, cityname, suburb)
-        return jsonify(filtered_content)
+        content = posts_module.get_suburb_posts(user_id=user_id, suburb=suburb)
+        return jsonify(content)

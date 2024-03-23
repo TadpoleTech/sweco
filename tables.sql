@@ -5,6 +5,8 @@ CREATE TABLE users (
     birth_year INT NOT NULL,
     home_lat NUMERIC(7, 6) NOT NULL,
     home_lon NUMERIC(7, 6) NOT NULL,
+    city TEXT,
+    subub TEXT,
     gender TEXT NOT NULL,
     is_admin BOOLEAN
 );
