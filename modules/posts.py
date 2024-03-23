@@ -14,7 +14,6 @@ def new_post(header, content, owner_id, board_id=None, pos_lat=None, pos_lon=Non
 
 
 def get_post_by_id(id, user_id=None):
-    return "s"
     if user_id:
         sql = """SELECT posts.*,
                 SUM(CASE when posts.post_id = votes.post_id THEN 1 ELSE 0 END) AS vote_count,
