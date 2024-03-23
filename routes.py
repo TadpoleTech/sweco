@@ -37,7 +37,8 @@ def boards():
 
 @app.route("/boards/<int:board_id>", methods=["GET", "POST"])
 def board(board_id):
-    user_id = session["user_id"]
+    if session["user_id"]:
+        user_id = session["user_id"]
     if request.method == "GET":
         board_info = boards_module.get_board_by_id(board_id)
         content = boards_module.get_posts_by_board_id(board_id)
@@ -64,7 +65,8 @@ def board(board_id):
 
 @app.route("/boards/<int:board_id>/<int:post_id>", methods=["GET", "POST"])
 def post(board_id, post_id):
-    user_id = session["user_id"]
+    if session["user_id"]:
+        user_id = session["user_id"]
     if request.method == "GET":
         content = posts_module.get_post_by_id(id=post_id, user_id=user_id)
         return jsonify(content)
@@ -72,7 +74,8 @@ def post(board_id, post_id):
 
 @app.route("/boards/<int:board_id>/<int:post_id>/vote", methods=["GET", "POST"])
 def votes(board_id, post_id):
-    user_id = session["user_id"]
+    if session["user_id"]:
+        user_id = session["user_id"]
     if request.method == "GET":
         return str(votes_module.get_votes_by_post_id(id=post_id))
     if request.method == "POST":
@@ -131,7 +134,8 @@ def current_user():
 
 @app.route("/posts", methods=["POST"])
 def new_post():
-    user_id = session["user_id"]
+    if session["user_id"]:
+        user_id = session["user_id"]
     if not user_id:
         abort(401)
     if request.method == "POST":
@@ -147,7 +151,8 @@ def new_post():
 
 @app.route("/posts/city/<cityname>", methods=["GET"])
 def posts_city(cityname):
-    user_id = session["user_id"]
+    if session["user_id"]:
+        user_id = session["user_id"]
     if request.method == "GET":
         data = request.get_json()
         content = posts_module.get_all_local_posts(user_id=user_id)
