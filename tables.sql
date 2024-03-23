@@ -45,7 +45,7 @@ CREATE TABLE posts (
     ON DELETE CASCADE
 );
 
-CREATE TABLE up_votes (
+CREATE TABLE votes (
     vote_id SERIAL PRIMARY KEY,
     user_id INT NOT NULL,
     post_id INT NOT NULL,
