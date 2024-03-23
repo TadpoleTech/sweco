@@ -13,6 +13,9 @@ python-dotenv = "^1.0.1"
 sqlalchemy = "^2.0.28"
 psycopg2 = "^2.9.9"
 flask-cors = "^4.0.0"
+osmpythontools = "^0.3.5"
+requests = "^2.31.0"
+xmltodict = "^0.13.0"
 
 
 [tool.poetry.group.dev.dependencies]
