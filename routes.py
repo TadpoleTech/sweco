@@ -8,6 +8,7 @@ import modules.users as users_module
 import modules.posts as posts_module
 import modules.votes as votes_module
 import modules.comments as comments_module
+import modules.osm_functions as osm_functions
 
 
 def get_user_id():
@@ -191,3 +192,13 @@ def tgl_admin_privs(user_id):
         abort(403)
     users_module.toggle_admin_privs(user_id)
     return jsonify({"message": "Admin privileges toggled."})
+
+
+@app.route("/get_current_address_info", methods=["POST"])
+def get_current_address_info():
+    if request.method == "POST":
+        data = request.get_json()
+        lat = data["lat"]
+        lon = data["lon"]
+        address_data = osm_functions.query(lat, lon)["addressparts"]
+        return jsonify({'city': address_data["city"], 'suburb': address_data['suburb']})
