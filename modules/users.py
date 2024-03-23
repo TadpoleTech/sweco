@@ -14,6 +14,12 @@ def get_all_users():
     return users
 
 
+def get_user_by_id(id):
+    sql = """SELECT * FROM users WHERE user_id = :id"""
+    result = db.session.execute(text(sql), {'id': id})
+    return result.fetchone()[0]
+
+
 def new_users(username, password, birth_year, home_lat, home_lon, gender):
     hashed_password = generate_password_hash(password)
     sql = """INSERT INTO users (username, password, birth_year, home_lat, home_lon, gender)

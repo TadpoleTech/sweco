@@ -19,7 +19,6 @@ def index():
     b = boards_module.get_all_boards()[0]["board_id"]
     print(b)
     session["user_id"] = 2
-    posts_module.new_post(b, random_string, random_string + random_string)
     votes_module.vote_post(1)
 
     return "haha"
@@ -111,6 +110,18 @@ def login():
         password = data["password"]
         return str(users_module.login(username, password))
     return "HEIPULIS! TÄMÄ METODI OTTAA VAAN POSTAUKSIA"
+
+
+@app.route("/logout")
+def logout():
+    session["username"] = None
+    session["user_id"] = None
+    session["is_admin"] = None
+
+
+@app.route("/current_user")
+def current_user():
+    return users_module.get_user_by_id(session["user_id"])
 
 
 @app.route("/posts", methods=["POST"])
