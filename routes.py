@@ -1,7 +1,7 @@
 import random
 import string
 
-from flask import request, session, abort
+from flask import request, session, abort, jsonify
 from app import app
 import modules.boards as boards_module
 import modules.users as users_module
@@ -27,14 +27,16 @@ def index():
 @app.route("/boards", methods=["GET", "POST"])
 def boards():
     if request.method == "GET":
-        return boards_module.get_all_boards()
+        return jsonify(boards_module.get_all_boards())
     if request.method == "POST":
-        if not request.form["lat"]:
+        data = request.get_json()
+        if not data.get("lat"):
             abort(400)
-        header = request.form["header"]
-        lat = request.form["lat"]
-        lon = request.form["lon"]
+        header = data["header"]
+        lat = data["lat"]
+        lon = data["lon"]
         boards_module.new_board(header, lat, lon)
+        return jsonify({"message": "Board created successfully."})
 
 
 @app.route("/boards/<int:board_id>", methods=["GET", "POST"])
@@ -46,16 +48,18 @@ def board(board_id):
             content[post["post_id"]] = posts_module.get_post_by_id(
                 post["post_id"])
         board_info["posts"] = content
-        return board_info
+        return jsonify(board_info)
     if request.method == "POST":
-        header = request.form["header"]
-        content = request.form["content"]
-        pos_lat = request.form["lat"]
-        pos_lon = request.form["lon"]
+        data = request.get_json()
+        header = data["header"]
+        content = data["content"]
+        pos_lat = data.get("lat")
+        pos_lon = data.get("lon")
         if not (pos_lat and pos_lon):
             posts_module.new_post(board_id, header, content)
         else:
             posts_module.new_post(board_id, header, content, pos_lat, pos_lon)
+        return jsonify({"message": "Post created successfully."})
 
 
 @app.route("/boards/<int:board_id>/<int:post_id>", methods=["GET", "POST"])
@@ -64,7 +68,7 @@ def post(board_id, post_id):
         content = posts_module.get_post_by_id(post_id)
         content["votes"] = votes_module.get_votes_by_post_id(post_id)
         content["voted"] = votes_module.if_voted(post_id)
-        return content
+        return jsonify(content)
 
 
 @app.route("/boards/<int:board_id>/<int:post_id>/vote", methods=["GET", "POST"])
@@ -73,6 +77,7 @@ def votes(board_id, post_id):
         return str(votes_module.get_votes_by_post_id(post_id))
     if request.method == "POST":
         votes_module.vote_post(post_id)
+        return jsonify({"message": "Vote recorded successfully."})
 
 
 @app.route("/boards/<int:board_id>/<int:post_id>/comments")
@@ -83,23 +88,26 @@ def comments(board_id, post_id):
 @app.route("/users", methods=["GET", "POST"])
 def users():
     if request.method == "GET":
-        return users_module.get_all_users()
+        return jsonify(users_module.get_all_users())
     if request.method == "POST":
-        username = request.form["username"]
-        password = request
-        birth_year = request.form["birth_year"]
-        home_lat = request.form["home_lat"]
-        home_lon = request.form["home_lon"]
-        gender = request.form["gender"]
+        data = request.get_json()
+        username = data["username"]
+        password = data["password"]
+        birth_year = data["birth_year"]
+        home_lat = data["home_lat"]
+        home_lon = data["home_lon"]
+        gender = data["gender"]
         users_module.new_users(username, password, birth_year,
                                home_lat, home_lon, gender)
+        return jsonify({"message": "User created successfully."})
 
 
 @app.route("/login", methods=["POST"])
 def login():
     '''RETURNS TRUE OR FALSE BASED ON SUCCESS (as string lol)'''
     if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
+        data = request.get_json()
+        username = data["username"]
+        password = data["password"]
         return str(users_module.login(username, password))
     return "HEIPULIS! TÄMÄ METODI OTTAA VAAN POSTAUKSIA"

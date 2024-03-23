@@ -12,8 +12,8 @@ CREATE TABLE users (
 CREATE TABLE boards (
     board_id SERIAL PRIMARY KEY,
     header TEXT NOT NULL,
-    pos_lat NUMERIC(7, 6),
-    pos_lon NUMERIC(7, 6)
+    pos_lat NUMERIC(10, 8),
+    pos_lon NUMERIC(11, 8)
 );
 
 CREATE TABLE admin_privs (
@@ -35,8 +35,8 @@ CREATE TABLE posts (
     board_id INT,
     header TEXT NOT NULL,
     content TEXT,
-    pos_lat NUMERIC(7, 6),
-    pos_lon NUMERIC(7, 6),
+    pos_lat NUMERIC(10, 8),
+    pos_lon NUMERIC(11, 8),
     FOREIGN KEY (owner_id)
     REFERENCES users (user_id)
     ON DELETE CASCADE,
@@ -71,4 +71,3 @@ CREATE TABLE comments (
     REFERENCES posts (post_id)
     ON DELETE CASCADE
 );
-
