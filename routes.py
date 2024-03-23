@@ -10,6 +10,12 @@ import modules.votes as votes_module
 import modules.osm_functions as osm_f
 
 
+def get_user_id():
+    if "user_id" in session:
+        return session["user_id"]
+    return None
+
+
 @app.route("/")
 def index():
     random_string = ''.join(random.choice(
@@ -37,8 +43,7 @@ def boards():
 
 @app.route("/boards/<int:board_id>", methods=["GET", "POST"])
 def board(board_id):
-    if session["user_id"]:
-        user_id = session["user_id"]
+    user_id = get_user_id()
     if request.method == "GET":
         board_info = boards_module.get_board_by_id(board_id)
         content = boards_module.get_posts_by_board_id(board_id)
@@ -65,8 +70,7 @@ def board(board_id):
 
 @app.route("/boards/<int:board_id>/<int:post_id>", methods=["GET", "POST"])
 def post(board_id, post_id):
-    if session["user_id"]:
-        user_id = session["user_id"]
+    user_id = get_user_id()
     if request.method == "GET":
         content = posts_module.get_post_by_id(id=post_id, user_id=user_id)
         return jsonify(content)
@@ -74,8 +78,7 @@ def post(board_id, post_id):
 
 @app.route("/boards/<int:board_id>/<int:post_id>/vote", methods=["GET", "POST"])
 def votes(board_id, post_id):
-    if session["user_id"]:
-        user_id = session["user_id"]
+    user_id = get_user_id()
     if request.method == "GET":
         return str(votes_module.get_votes_by_post_id(id=post_id))
     if request.method == "POST":
@@ -134,8 +137,7 @@ def current_user():
 
 @app.route("/posts", methods=["POST"])
 def new_post():
-    if session["user_id"]:
-        user_id = session["user_id"]
+    user_id = get_user_id()
     if not user_id:
         abort(401)
     if request.method == "POST":
@@ -151,10 +153,8 @@ def new_post():
 
 @app.route("/posts/city/<cityname>", methods=["GET"])
 def posts_city(cityname):
-    if session["user_id"]:
-        user_id = session["user_id"]
+    user_id = get_user_id()
     if request.method == "GET":
-        data = request.get_json()
         content = posts_module.get_all_local_posts(user_id=user_id)
         filtered_content = osm_f.city_filter(content, cityname)
         return jsonify(filtered_content)
@@ -162,9 +162,8 @@ def posts_city(cityname):
 
 @app.route("/posts/city/<cityname>/<suburb>", methods=["GET", "POST"])
 def posts_suburb(cityname, suburb):
-    user_id = session["user_id"]
+    user_id = get_user_id()
     if request.method == "GET":
-        data = request.get_json()
         content = posts_module.get_all_local_posts(user_id=user_id)
         filtered_content = osm_f.suburb_filter(content, cityname, suburb)
         return jsonify(filtered_content)
