@@ -58,9 +58,9 @@ def board(board_id):
         pos_lat = data.get("lat")
         pos_lon = data.get("lon")
         if not (pos_lat and pos_lon):
-            posts_module.new_post(board_id, header, content)
+            posts_module.new_post(header, content, board_id)
         else:
-            posts_module.new_post(board_id, header, content, pos_lat, pos_lon)
+            posts_module.new_post(header, content, board_id, pos_lat, pos_lon)
         return jsonify({"message": "Post created successfully."})
 
 
@@ -113,9 +113,33 @@ def login():
     return "HEIPULIS! TÄMÄ METODI OTTAA VAAN POSTAUKSIA"
 
 
-@app.route("/posts/city/<str:cityname>")
+@app.route("/posts/city/<str:cityname>", methods=["GET", "POST"])
 def posts_city(cityname):
     if request.method == "GET":
         content = posts_module.get_all_local_posts()
         filtered_content = osm_f.city_filter(content, cityname)
         return jsonify(filtered_content)
+    if request.method == "POST":
+        data = request.get_json()
+        header = data["header"]
+        content = data["content"]
+        post_lat = data["pos_lat"]
+        pos_lon = data["pos_lon"]
+        posts_module.new_post(
+            header, content, pos_lat=post_lat, pos_lon=pos_lon)
+
+
+@app.route("/posts/city/<str:cityname>/<str:suburb>", methods=["GET", "POST"])
+def posts_suburb(cityname, suburb):
+    if request.method == "GET":
+        content = posts_module.get_all_local_posts()
+        filtered_content = osm_f.suburb_filter(content, cityname. suburbname)
+        return jsonify(filtered_content)
+    if request.method == "POST":
+        data = request.get_json()
+        header = data["header"]
+        content = data["content"]
+        post_lat = data["pos_lat"]
+        pos_lon = data["pos_lon"]
+        posts_module.new_post(
+            header, content, pos_lat=post_lat, pos_lon=pos_lon)

@@ -10,9 +10,18 @@ def city_filter(list_of_posts, cityname):
     '''Returns a dict of posts corrisponging to that city'''
     out = {}
     for post in list_of_posts:
-        post_city = query(post["pos_lon"], post["pos_lat"])[
-            "addressparts"]["key"]
+        post_city = query(post["pos_lon"], post["pos_lat"])
         if post_city == cityname:
+            out[post["post_id"]] = post
+    return out
+
+
+def suburb_filter(list_of_posts, cityname, suburb_name):
+    out = {}
+    for post in list_of_posts:
+        post_address_data = query(post["pos_lon"], post["pos_lat"])[
+            "addressparts"]
+        if post_address_data['city'] == cityname and post_address_data['suburb'] == suburb_name:
             out[post["post_id"]] = post
     return out
 

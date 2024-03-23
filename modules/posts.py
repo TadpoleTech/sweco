@@ -3,7 +3,7 @@ from flask import session
 from db import db
 
 
-def new_post(board_id, header, content, pos_lat=None, pos_lon=None):
+def new_post(header, content, board_id=None, pos_lat=None, pos_lon=None):
     owner_id = session["user_id"]
     if not (board_id or (pos_lat and pos_lon)):
         return False
@@ -38,6 +38,7 @@ def get_all_local_posts():
             THEN 1 ELSE 0 END) AS has_voted
             FROM posts
             LEFT JOIN votes ON votes.post_id = posts.post_id
+            WHERE posts.board_id IS NULL
             GROUP BY posts.post_id
         """
     result = db.session.execute(text(sql), {'user_id': user_id})
