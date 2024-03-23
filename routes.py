@@ -44,10 +44,11 @@ def board(board_id):
     if request.method == "GET":
         board_info = boards_module.get_board_by_id(board_id)
         content = boards_module.get_posts_by_board_id(board_id)
+        content_dict = {}
         for post in content:
-            content[post["post_id"]] = posts_module.get_post_by_id(
+            content_dict[post["post_id"]] = posts_module.get_post_by_id(
                 post["post_id"])
-        board_info["posts"] = content
+        board_info["posts"] = content_dict
         return jsonify(board_info)
     if request.method == "POST":
         data = request.get_json()
