@@ -66,8 +66,6 @@ def board(board_id):
 def post(board_id, post_id):
     if request.method == "GET":
         content = posts_module.get_post_by_id(post_id)
-        content["votes"] = votes_module.get_votes_by_post_id(post_id)
-        content["voted"] = votes_module.if_voted(post_id)
         return jsonify(content)
 
 
