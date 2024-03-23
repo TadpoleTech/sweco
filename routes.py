@@ -8,7 +8,6 @@ import modules.users as users_module
 import modules.posts as posts_module
 import modules.votes as votes_module
 import modules.comments as comments_module
-import modules.osm_functions as osm_f
 
 
 def get_user_id():

@@ -5,8 +5,6 @@ CREATE TABLE users (
     birth_year INT NOT NULL,
     home_lat NUMERIC(7, 6) NOT NULL,
     home_lon NUMERIC(7, 6) NOT NULL,
-    city TEXT,
-    subub TEXT,
     gender TEXT NOT NULL,
     is_admin BOOLEAN
 );
@@ -39,6 +37,8 @@ CREATE TABLE posts (
     content TEXT,
     pos_lat NUMERIC(10, 8),
     pos_lon NUMERIC(11, 8),
+    city TEXT,
+    suburb TEXT,
     FOREIGN KEY (owner_id)
     REFERENCES users (user_id)
     ON DELETE CASCADE,

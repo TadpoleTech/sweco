@@ -1,5 +1,5 @@
 from sqlalchemy.sql import text
-from osm_functions import query
+from modules.osm_functions import query
 from flask import session
 from db import db
 
@@ -14,7 +14,7 @@ def new_post(header, content, owner_id, board_id=None, pos_lat=None, pos_lon=Non
     else:
         city = None
         suburb = None
-    sql = """INSERT INTO posts (owner_id, board_id, header, content, pos_lat, pos_lon, city, suburb timestamp)
+    sql = """INSERT INTO posts (owner_id, board_id, header, content, pos_lat, pos_lon, city, suburb, timestamp)
              VALUES (:owner_id, :board_id, :header, :content, :pos_lat, :pos_lon, :city, :suburb, NOW())"""
     db.session.execute(text(sql), {'owner_id': owner_id, 'board_id': board_id,
                        'header': header, 'content': content, 'pos_lat': pos_lat, 'pos_lon': pos_lon,
@@ -89,8 +89,8 @@ def get_suburb_posts(user_id=None, suburb=None):
                 SUM(CASE when posts.post_id = votes.post_id THEN 1 ELSE 0 END) AS vote_count
                 FROM posts
                 LEFT JOIN votes ON votes.post_id = posts.post_id
-                WHERE city = :city
+                WHERE suburb = :suburb
                 GROUP BY posts.post_id"""
-        result = db.session.execute(text(sql), {'city': city}).fetchall()
+        result = db.session.execute(text(sql), {'suburb': suburb}).fetchall()
     posts = [dict(row._asdict()) for row in result]
     return posts
