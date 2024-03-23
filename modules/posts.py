@@ -4,7 +4,7 @@ from db import db
 
 
 def new_post(header, content, board_id=None, pos_lat=None, pos_lon=None):
-    owner_id = session["user_id"]
+    owner_id = 1  # session["user_id"]
     if not (board_id or (pos_lat and pos_lon)):
         return False
     sql = """INSERT INTO posts (owner_id, board_id, header, content, pos_lat, pos_lon, timestamp)
