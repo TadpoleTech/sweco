@@ -138,7 +138,7 @@ def posts_city(cityname):
     if request.method == "GET":
         content = posts_module.get_all_local_posts()
         filtered_content = osm_f.city_filter(content, cityname)
-        return jsonify(filtered_content)
+        return filtered_content
 
 
 @app.route("/posts/city/<cityname>/<suburb>", methods=["GET", "POST"])
