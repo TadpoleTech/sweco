@@ -73,3 +73,5 @@ CREATE TABLE comments (
     REFERENCES posts (post_id)
     ON DELETE CASCADE
 );
+
+INSERT INTO users (username, password, birth_year, home_lat , home_lon, gender, is_admin) VALUES ('admin', 'scrypt:32768:8:1$o7GNEB1J3DHw1NMd$25dd6510883c7325f2471193d6137da2d6ee0beb6125e10e4dd307ca2d7c6583428ccb5a18dd1a1897c64e16198c763fb5b7aaab625ac837d1601860cf2e1266', 1990, 0, 0, '?', TRUE);

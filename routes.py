@@ -183,3 +183,11 @@ def posts_suburb(cityname, suburb):
     if request.method == "GET":
         content = posts_module.get_suburb_posts(user_id=user_id, suburb=suburb)
         return jsonify(content)
+
+
+@app.route("/users/<int:user_id>/toggle_admin", methods=["GET"])
+def tgl_admin_privs(user_id):
+    if not is_admin():
+        abort(403)
+    users_module.toggle_admin_privs(user_id)
+    return jsonify({"message": "Admin privileges toggled."})

@@ -44,3 +44,9 @@ def login(username, password):
         session['is_admin'] = user.is_admin is True
         return True
     return False
+
+
+def toggle_admin_privs(user_id):
+    sql = """UPDATE users SET is_admin = NOT is_admin WHERE user_id = :user_id"""
+    db.session.execute(text(sql), {'user_id': user_id})
+    db.session.commit()
