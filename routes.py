@@ -113,12 +113,8 @@ def login():
     return "HEIPULIS! TÄMÄ METODI OTTAA VAAN POSTAUKSIA"
 
 
-@app.route("/posts/city/<str:cityname>", methods=["GET", "POST"])
-def posts_city(cityname):
-    if request.method == "GET":
-        content = posts_module.get_all_local_posts()
-        filtered_content = osm_f.city_filter(content, cityname)
-        return jsonify(filtered_content)
+@app.route("/posts", methods=["POST"])
+def new_post():
     if request.method == "POST":
         data = request.get_json()
         header = data["header"]
@@ -127,19 +123,19 @@ def posts_city(cityname):
         pos_lon = data["pos_lon"]
         posts_module.new_post(
             header, content, pos_lat=post_lat, pos_lon=pos_lon)
+
+
+@app.route("/posts/city/<str:cityname>", methods=["GET"])
+def posts_city(cityname):
+    if request.method == "GET":
+        content = posts_module.get_all_local_posts()
+        filtered_content = osm_f.city_filter(content, cityname)
+        return jsonify(filtered_content)
 
 
 @app.route("/posts/city/<str:cityname>/<str:suburb>", methods=["GET", "POST"])
 def posts_suburb(cityname, suburb):
     if request.method == "GET":
         content = posts_module.get_all_local_posts()
-        filtered_content = osm_f.suburb_filter(content, cityname. suburbname)
+        filtered_content = osm_f.suburb_filter(content, cityname, suburb)
         return jsonify(filtered_content)
-    if request.method == "POST":
-        data = request.get_json()
-        header = data["header"]
-        content = data["content"]
-        post_lat = data["pos_lat"]
-        pos_lon = data["pos_lon"]
-        posts_module.new_post(
-            header, content, pos_lat=post_lat, pos_lon=pos_lon)
