@@ -7,6 +7,7 @@ import modules.boards as boards_module
 import modules.users as users_module
 import modules.posts as posts_module
 import modules.votes as votes_module
+import modules.osm_functions as osm_f
 
 
 @app.route("/")
@@ -110,3 +111,11 @@ def login():
         password = data["password"]
         return str(users_module.login(username, password))
     return "HEIPULIS! TÄMÄ METODI OTTAA VAAN POSTAUKSIA"
+
+
+@app.route("/posts/city/<str:cityname>")
+def posts_city(cityname):
+    if request.method == "GET":
+        content = posts_module.get_all_local_posts()
+        filtered_content = osm_f.city_filter(content, cityname)
+        return jsonify(filtered_content)
