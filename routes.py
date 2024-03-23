@@ -125,14 +125,14 @@ def login():
 
 @app.route("/logout")
 def logout():
-    # I don't know if this needs any code
-    pass
+    session["user_id"] = None
+    session["username"] = None
+    session["is_admin"] = None
 
 
 @app.route("/current_user")
 def current_user():
-    # I don't know if this needs any code
-    pass
+    return jsonify(users_module.get_user_by_id(get_user_id()))
 
 
 @app.route("/posts", methods=["POST"])

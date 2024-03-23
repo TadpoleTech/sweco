@@ -15,6 +15,8 @@ def get_all_users():
 
 
 def get_user_by_id(id):
+    if not id:
+        return False
     sql = """SELECT * FROM users WHERE user_id = :id"""
     result = db.session.execute(text(sql), {'id': id})
     return result.fetchone()[0]
@@ -39,6 +41,6 @@ def login(username, password):
     if check_password_hash(hashed_password, password):
         session['username'] = user.username
         session['user_id'] = user.user_id
-        session['is_admin'] = user.is_admin
+        session['is_admin'] = user.is_admin is True
         return True
     return False
