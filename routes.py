@@ -136,7 +136,7 @@ def new_post():
             header, content, pos_lat=post_lat, pos_lon=pos_lon)
 
 
-@app.route("/posts/city/<str:cityname>", methods=["GET"])
+@app.route("/posts/city/<cityname>", methods=["GET"])
 def posts_city(cityname):
     if request.method == "GET":
         content = posts_module.get_all_local_posts()
@@ -144,7 +144,7 @@ def posts_city(cityname):
         return jsonify(filtered_content)
 
 
-@app.route("/posts/city/<str:cityname>/<str:suburb>", methods=["GET", "POST"])
+@app.route("/posts/city/<cityname>/<suburb>", methods=["GET", "POST"])
 def posts_suburb(cityname, suburb):
     if request.method == "GET":
         content = posts_module.get_all_local_posts()
