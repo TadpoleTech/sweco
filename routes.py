@@ -7,6 +7,7 @@ import modules.boards as boards_module
 import modules.users as users_module
 import modules.posts as posts_module
 import modules.votes as votes_module
+import modules.comments as comments_module
 import modules.osm_functions as osm_f
 
 
@@ -14,6 +15,12 @@ def get_user_id():
     if "user_id" in session:
         return session["user_id"]
     return None
+
+
+def is_admin():
+    if "is_admin" in session:
+        return session["is_admin"]
+    return False
 
 
 @app.route("/")
@@ -88,9 +95,21 @@ def votes(board_id, post_id):
         abort(401)
 
 
-@app.route("/boards/<int:board_id>/<int:post_id>/comments")
+@app.route("/boards/<int:board_id>/<int:post_id>/comments", methods=["GET", "POST"])
 def comments(board_id, post_id):
-    return "COMMENTTI"
+    if request.method == "GET":
+        return jsonify(comments_module.get_comments_by_post_id(post_id))
+    if request.method == "POST":
+        if not is_admin():
+            abort(403)
+        if not get_user_id():
+            abort(401)
+        data = request.get_json()
+        content = data["content"]
+        user_id = get_user_id()
+        comments_module.new_comment(
+            post_id=post_id, user_id=user_id, content=content)
+        return jsonify({"message": "Comment created successfully."})
 
 
 @app.route("/users", methods=["GET", "POST"])
