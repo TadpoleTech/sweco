@@ -15,11 +15,7 @@ def index():
     random_string = ''.join(random.choice(
         string.ascii_uppercase + string.digits) for _ in range(10))
     users_module.new_users(random_string, random_string, 1, 1, 1, "MAN")
-    boards_module.new_board(random_string, 1, 1)
-    b = boards_module.get_all_boards()[0]["board_id"]
-    print(b)
-    session["user_id"] = 2
-    votes_module.vote_post(1)
+    session["user_id"] = 1
 
     return "haha"
 
